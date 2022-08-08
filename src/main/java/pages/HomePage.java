@@ -36,7 +36,6 @@ public class HomePage extends BasePage {
         getTextFromElement("home_category_dropdown_label");
         String name = findElement("home_category_dropdown_label").getText();
         assertThat(categoryName).isEqualTo(name);
-        //compareTextWithExpected("home_category_dropdown_label", categoryName);
     }
 
     public void searchForProduct(String productName) {
@@ -45,7 +44,6 @@ public class HomePage extends BasePage {
         clickToElement("home_search_button");
         String title = findElement("home_search_list_title").getText();
         assertThat(productName).isEqualTo(title);
-        //compareTextWithExpected("home_search_list_title", productName);
     }
 
     public void selectProductFromSearchList(String index) {
