@@ -1,6 +1,12 @@
 package pages;
 
+import org.openqa.selenium.WebDriver;
+
 public class LoginPage extends BasePage {
+    public LoginPage(WebDriver driver) {
+        super(driver);
+    }
+
     public void login() {
         sendKeysToElement("login_email_input", "user_email");
         clickToElement("login_continue_button");
@@ -8,6 +14,7 @@ public class LoginPage extends BasePage {
         clickToElement("login_submit_button");
     }
 
-    public void logout() {
+    public void checkForLogout() {
+        elementIsDisplayed("login_email_input");
     }
 }

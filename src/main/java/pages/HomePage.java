@@ -1,39 +1,63 @@
 package pages;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import utils.ConfigReader;
+
+import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
+
 public class HomePage extends BasePage {
+
+    ConfigReader configReader;
+
+    public HomePage(WebDriver driver) {
+        super(driver);
+    }
+
     public void visitHomePage() {
-        navigateToUrl("base_url");
-        //page is displayed
+        configReader = new ConfigReader("config");
+        navigateToUrl(configReader.getProperty("base_url"));
+        checkForUrl(configReader.getProperty("base_url"));
         clickToElement("home_cookie_button");
     }
 
     public void navigateToLogIn() {
         clickToElement("home_login_navigation");
-        clickToElement("home_login_item");
     }
 
-    public void navigateToFavorite() {
+    public void navigateToList() {
+        hoverElement("home_account_navigation");
+        clickToElement("home_list_navigation");
     }
 
     public void chooseCategory(String categoryName) {
         clickToElement("home_category_dropdown");
         getDropdownItem("home_category_dropdown_items", categoryName);
         getTextFromElement("home_category_dropdown_label");
-        compareTextWithExpected("home_category_dropdown_label", categoryName);
+        String name = findElement("home_category_dropdown_label").getText();
+        assertThat(categoryName).isEqualTo(name);
+        //compareTextWithExpected("home_category_dropdown_label", categoryName);
     }
 
     public void searchForProduct(String productName) {
         clickToElement("home_search_input");
         sendKeysToElement("home_search_input", productName);
         clickToElement("home_search_button");
-        compareTextWithExpected("home_search_list_title", productName);
+        String title = findElement("home_search_list_title").getText();
+        assertThat(productName).isEqualTo(title);
+        //compareTextWithExpected("home_search_list_title", productName);
+    }
+
+    public void selectProductFromSearchList(String index) {
+        driver.findElement(By.xpath("//*[@data-index='" + index + "']")).click();
+    }
+
+    public void logout() {
+        hoverElement("home_account_navigation");
+        clickToElement("home_logout_navigation");
     }
 
     public void checkForLogin() {
-        elementIsDisplayed("home_logged_in_dropdown");
-    }
-
-    public void checkForLogout() {
-        elementIsDisplayed("home_logged_out_dropdown");
+        elementIsDisplayed("home_user_name_text");
     }
 }
