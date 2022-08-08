@@ -1,26 +1,24 @@
-package tests;
-
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.apache.commons.io.FileUtils;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.firefox.FirefoxDriver;
 import org.openqa.selenium.ie.InternetExplorerDriver;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import utils.ConfigReader;
 
-import java.io.File;
 import java.util.concurrent.TimeUnit;
 
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
+@ExtendWith(TestResultLogger.class)
 public class BaseTest {
-    public static WebDriver driver;
-    protected ConfigReader configReader = new ConfigReader("config");
-    private static Logger logger = LoggerFactory.getLogger(BaseTest.class);
+    WebDriver driver;
+    ConfigReader configReader = new ConfigReader("config");
 
+    @BeforeAll
     public void initializeDriver() {
 
         if (configReader.getProperty("web_driver").equals("chrome")) {
@@ -29,9 +27,10 @@ public class BaseTest {
             ChromeOptions options = new ChromeOptions();
 
             driver = new ChromeDriver(options);
-            options.addArguments("incognito");
-            driver.manage().window().maximize();
+            //driver.get(configReader.getProperty("base_url"));
             driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+            driver.manage().window().maximize();
+            options.addArguments("incognito");
         } else if (configReader.getProperty("web_driver").equals("firefox")) {
             WebDriverManager.firefoxdriver().setup();
             driver = new FirefoxDriver();
@@ -41,18 +40,10 @@ public class BaseTest {
         }
     }
 
-    public void closeDriver() {
+    @AfterAll
+    public void killDriver() {
         if (driver != null) {
             driver.quit();
-        }
-    }
-
-    public void testFailed() {
-        File screenshotFile = ((TakesScreenshot) driver).getScreenshotAs(OutputType.FILE);
-        try {
-            FileUtils.copyFile(screenshotFile, new File("target/" + System.currentTimeMillis() + ".png"));
-        } catch (Exception e) {
-            logger.warn("Test failed!", e);
         }
     }
 }
