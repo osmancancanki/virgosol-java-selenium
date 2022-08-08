@@ -10,6 +10,20 @@ public class HomePage extends BasePage {
 
     ConfigReader configReader;
 
+    By searchInput=By.id("twotabsearchtextbox");
+    By searchButton=By.id("nav-search-submit-button");
+    By cookieButton=By.xpath("//*[@id='a-autoid-0-announce']");
+    By categoryDropdown=By.id("nav-search-dropdown-card");
+    By categoryDropdownItem=By.xpath("//*[@id='searchDropdownBox']");
+    By categoryDropdownLabel=By.id(":nav-search-label-id");
+    By loginNavigation=By.xpath("//*[text()='Hesap ve Listeler']");
+    By userNameText=By.id("nav-link-accountList-nav-line-1");
+    By logoutNavigation=By.xpath("//*[text()='Çıkış Yap']");
+    By accountNavigation=By.xpath("//*[@data-csa-c-content-id='nav_youraccount_btn']");
+    By listNavigation=By.xpath("//*[@class='nav-text'][text()='Favori Listem']");
+    By searchListTitle=By.xpath("//*[@class='a-color-state a-text-bold']");
+    By searchSelectedPage=By.xpath("//*[@class='s-pagination-item s-pagination-selected']");
+
     public HomePage(WebDriver driver) {
         super(driver);
     }
@@ -18,32 +32,34 @@ public class HomePage extends BasePage {
         configReader = new ConfigReader("config");
         navigateToUrl(configReader.getProperty("base_url"));
         checkForUrl(configReader.getProperty("base_url"));
-        clickToElement("home_cookie_button");
+        clickToElement(cookieButton);
     }
 
     public void navigateToLogIn() {
-        clickToElement("home_login_navigation");
+        clickToElement(loginNavigation);
     }
 
     public void navigateToList() {
-        hoverElement("home_account_navigation");
-        clickToElement("home_list_navigation");
+        hoverElement(accountNavigation);
+        clickToElement(listNavigation);
     }
 
     public void chooseCategory(String categoryName) {
-        clickToElement("home_category_dropdown");
-        getDropdownItem("home_category_dropdown_items", categoryName);
-        getTextFromElement("home_category_dropdown_label");
-        String name = findElement("home_category_dropdown_label").getText();
-        assertThat(categoryName).isEqualTo(name);
+        clickToElement(categoryDropdown);
+        getDropdownItem(categoryDropdownItem, categoryName);
+        assertThat(getTextFromElement(categoryDropdownLabel)).isEqualTo(categoryName);
     }
 
     public void searchForProduct(String productName) {
-        clickToElement("home_search_input");
-        sendKeysToElement("home_search_input", productName);
-        clickToElement("home_search_button");
-        String title = findElement("home_search_list_title").getText();
-        assertThat(productName).isEqualTo(title);
+        clickToElement(searchInput);
+        sendKeysToElement(searchInput, productName);
+        clickToElement(searchButton);
+        assertThat(getTextFromElement(searchListTitle)).isEqualTo(productName);
+    }
+
+    public void selectPageFromPagination(String pageNumber) {
+        driver.findElement(By.xpath("//*[@aria-label='" + pageNumber + " sayfasına git']")).click();
+        assertThat(getTextFromElement(searchSelectedPage)).isEqualTo(pageNumber);
     }
 
     public void selectProductFromSearchList(String index) {
@@ -51,11 +67,11 @@ public class HomePage extends BasePage {
     }
 
     public void logout() {
-        hoverElement("home_account_navigation");
-        clickToElement("home_logout_navigation");
+        hoverElement(accountNavigation);
+        clickToElement(logoutNavigation);
     }
 
     public void checkForLogin() {
-        elementIsDisplayed("home_user_name_text");
+        elementIsDisplayed(userNameText);
     }
 }

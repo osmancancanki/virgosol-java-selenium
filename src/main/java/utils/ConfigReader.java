@@ -33,34 +33,4 @@ public class ConfigReader {
         if (property != null) return property;
         else throw new RuntimeException("@@@@@Property is not found@@@@@");
     }
-
-    public By getElementValue(String locatorName) {
-        String locatorProperty = properties.getProperty(locatorName);
-        String locatorType = locatorProperty.split(":")[0];
-        String locatorValue = locatorProperty.split(":")[1];
-
-        By locator = null;
-        switch (locatorType) {
-            case "id":
-                locator = By.id(locatorValue);
-                break;
-            case "className":
-                locator = By.name(locatorValue);
-                break;
-            case "cssSelector":
-                locator = By.cssSelector(locatorValue);
-                break;
-            case "linkText":
-                locator = By.linkText(locatorValue);
-                break;
-            case "tagName":
-                locator = By.tagName(locatorValue);
-                break;
-            case "xpath":
-                locator = By.xpath(locatorValue);
-                break;
-        }
-        if (locator != null) return locator;
-        else throw new RuntimeException("@@@@@Element is not found@@@@@");
-    }
 }

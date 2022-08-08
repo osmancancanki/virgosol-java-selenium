@@ -8,7 +8,6 @@ import org.openqa.selenium.JavascriptExecutor;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
-import utils.ConfigReader;
 import utils.Log;
 
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 public class BasePage {
     WebDriver driver;
     WebDriverWait wait;
-    ConfigReader elementReader;
 
     public BasePage(WebDriver driver) {
         this.driver = driver;
@@ -26,11 +24,9 @@ public class BasePage {
 
     Log log = new Log();
 
-    public WebElement findElement(String locatorName) {
+    public WebElement findElement(By locatorName) {
         wait = new WebDriverWait(driver, 10);
-        elementReader = new ConfigReader("element");
-        By locator = elementReader.getElementValue(locatorName);
-        WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(locator));
+        WebElement webElement = wait.until(ExpectedConditions.presenceOfElementLocated(locatorName));
         ((JavascriptExecutor) driver).executeScript("arguments[0].scrollIntoView({behavior: 'smooth', block: 'center', inline: 'center'})", webElement);
         return webElement;
     }
@@ -44,7 +40,7 @@ public class BasePage {
 
     }
 
-    public void clickToElement(String locatorName) {
+    public void clickToElement(By locatorName) {
         try {
             findElement(locatorName).click();
         } catch (Exception e) {
@@ -52,7 +48,7 @@ public class BasePage {
         }
     }
 
-    public void hoverElement(String locatorName) {
+    public void hoverElement(By locatorName) {
         Actions action = new Actions(driver);
         try {
             action.moveToElement(findElement(locatorName)).perform();
@@ -61,7 +57,7 @@ public class BasePage {
         }
     }
 
-    public void getDropdownItem(String locatorName, String itemName) {
+    public void getDropdownItem(By locatorName, String itemName) {
         try {
             Select dropdownItems = new Select(findElement(locatorName));
             dropdownItems.selectByVisibleText(itemName);
@@ -70,25 +66,15 @@ public class BasePage {
         }
     }
 
-    public void compareTextWithExpected(String locatorName, String expectedText) {
-        String text = findElement(locatorName).getText();
-        assertThat(expectedText).isEqualTo(text);
-    }
-
-    public void selectPageFromPagination(String pageNumber) {
-        driver.findElement(By.xpath("//*[@aria-label='" + pageNumber + " sayfasına git']")).click();
-        compareTextWithExpected("home_search_selected_page", pageNumber);
-    }
-
-    public String getTextFromElement(String locatorName) {
+    public String getTextFromElement(By locatorName) {
         return findElement(locatorName).getText();
     }
 
-    public String getAttributeFromElement(String locatorName, String attributeName) {
+    public String getAttributeFromElement(By locatorName, String attributeName) {
         return findElement(locatorName).getAttribute(attributeName);
     }
 
-    public void sendKeysToElement(String locatorName, String text) {
+    public void sendKeysToElement(By locatorName, String text) {
         try {
             findElement(locatorName).sendKeys(text);
         } catch (Exception e) {
@@ -96,7 +82,7 @@ public class BasePage {
         }
     }
 
-    public Boolean elementIsDisplayed(String locatorName) {
+    public Boolean elementIsDisplayed(By locatorName) {
         return findElement(locatorName).isDisplayed();
     }
 
